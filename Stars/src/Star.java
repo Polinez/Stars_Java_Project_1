@@ -1,6 +1,8 @@
 import java.io.*;
+import java.util.*;
 
-public class Star {
+//implementujemy serializacje
+public class Star  implements Serializable {
 
     private String nazwa;
     private Gwiazdozbior gwiazdozbior;
@@ -15,6 +17,11 @@ public class Star {
     private double temperatura;
     private double masa;
 
+    //lista do przechowywyania wszystkich obiektow gwiazd
+    private static ArrayList<Star> listaGwiazd = new ArrayList<Star>();
+
+    // Mapa przechowująca liczbę gwiazd w danym gwiazdozbirze
+    private static Map<String, Integer> mapaGwiazdWGwaizdozbiorze = new HashMap<>();    //Bardzo podoba mi sie ta nazwa ;)
 
 
 
@@ -53,7 +60,11 @@ public class Star {
 !!!!!!!!!!!!!!!!!!!! Dokonczyc
      */
     public void setNazwaKatalogowa(Gwiazdozbior gwiazdozbior) {
-        this.nazwaKatalogowa =gwiazdozbior.getNazwa(); //generujNazweKatalogowa(gwiazdozbior);
+        //pobieramy z mapy ilosc gwazd w gwiazdozbiorze
+        int iloscGwiazdWGwiazdozbiorze = mapaGwiazdWGwaizdozbiorze.getOrDefault(gwiazdozbior.getNazwa(),0);
+
+        this.nazwaKatalogowa = GreckiAlfabet.values()[iloscGwiazdWGwiazdozbiorze].toString() + " " + gwiazdozbior.getNazwa();
+
     }
 
 
@@ -232,6 +243,8 @@ public class Star {
         }
     }
 
+
+
     //Masa gwiazdy
     public double getMasa() {
         return masa;
@@ -274,11 +287,71 @@ public class Star {
         setAbsolutnaWielkosc(); //absolutna wielkosc za pomoca wzoru (M = m − 5· log10r + 5)
         setTemperatura(temperatura);  //temperatura gwiazdy w Stopniach celcjusza
         setMasa(masa);  //masa gwiazdy w masach slonca
+
+        //dodajemy gwiazde do listy gdy zostanie utworzona
+        listaGwiazd.add(this);
+
+        //dodajemy do mapy +1 gwiazde do danego gwiazdozbioru
+        mapaGwiazdWGwaizdozbiorze.put(gwiazdozbior.getNazwa(), mapaGwiazdWGwaizdozbiorze.getOrDefault(gwiazdozbior.getNazwa(), 0) + 1);
     }
 
+    //Serializacja gwiazdy
+    public static void SerializujGwiazde(Star gwiazda){
+        try {
+
+            //tworzymy plik o nazwie tej gwiazdy ktora chcemy zserializowac w folderze Gwiazdy
+            String sciezka = "Stars//src//Gwiazdy//" + gwiazda.getNazwa() + ".ser";
+            FileOutputStream fileOut = new FileOutputStream(sciezka);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(gwiazda);
+            out.close();
+            fileOut.close();
+            System.out.println("Pomyslnie zserializowano gwiazde o nazwie: "+gwiazda.getNazwa());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Deserializacja gwiazdy
+    public static void DeserializujGwiazde(String nazwa) {
+        try {
+            //deserializujemy plik o nazwie tej nazwie gwiazdy ktora podalismy w parametrze
+            String sciezka = "Stars//src//Gwiazdy//" + nazwa + ".ser";
+            FileInputStream fileIn = new FileInputStream(sciezka);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Star gwiazda = (Star) in.readObject();
+            in.close();
+            fileIn.close();
+            System.out.println("Pomyslnie odczytano gwiazde o nazwie: " + gwiazda.getNazwa());
 
 
+            //sprawdzamy czy gwiazda o takiej nazwie juz istnieje w liscie jak istnieje to wyswietlamy blad
+            // jesli nie istnieje to dodajemy do listy
 
+            for (Star g : listaGwiazd) {
+                if (g.getNazwa().equals(gwiazda.getNazwa())) {
+                    System.out.println("Gwiazda o nazwie "+g.getNazwa()+" juz istnieje");
+                }else {
+                    listaGwiazd.add(gwiazda); // dodajemy gwiazde do listy
+                    System.out.println("Pomyslnie dodano deserializowana gwiazde do listy");
+                }
+            }
+
+            // dodajemy do mapy +1 gwiazde do danego gwiazdozbioru tak jak w konstruktorze (bo deserializacja nie wywoluje konstruktora)
+            mapaGwiazdWGwaizdozbiorze.put(gwiazda.gwiazdozbior.getNazwa(), mapaGwiazdWGwaizdozbiorze.getOrDefault(gwiazda.gwiazdozbior.getNazwa(), 0) + 1);
+
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Wyswietlenie wszystkich gwiazd ktore sa na liscie (wszystkie gwiazdy)
+    public static void WyswietlWszytskieGwiazdy() {
+        System.out.println("Wszystkie gwiazdy:");
+        for (Star gwiazda : listaGwiazd) {
+            System.out.println("Nazwa: "+gwiazda.nazwa+" "+"Nazwa Katalogowa: "+gwiazda.nazwaKatalogowa); // Tutaj mozemy zmienic jakie warotosci chcemy aby byly wyswietlane
+        }
+    }
 
 
 }

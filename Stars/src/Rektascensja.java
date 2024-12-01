@@ -1,4 +1,6 @@
-public class Rektascensja {
+import java.io.Serializable;
+
+public class Rektascensja implements Serializable {
     private int xx;
     private int yy;
     private int zz;

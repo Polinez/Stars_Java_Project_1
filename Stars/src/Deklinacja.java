@@ -1,4 +1,6 @@
-public class Deklinacja {
+import java.io.Serializable;
+
+public class Deklinacja implements Serializable {
     private int stopnie;
     private int minuty;
     private float sekundy;
