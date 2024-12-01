@@ -1,7 +1,24 @@
+import java.io.*;
+
 public class Star {
 
     private String nazwa;
+    private Gwiazdozbior gwiazdozbior;
     private String nazwaKatalogowa;
+    private String polkula;
+    private Deklinacja deklinacja;
+    private Rektascensja rektascensja;
+    private double obserwowanaWielkosc;
+    private double odlegloscWParsekach;
+    private double odlegloscWLatachSwietlnych;
+    private double absolutnaWielkosc;
+    private double temperatura;
+    private double masa;
+
+
+
+
+
 
 
     //Nazwa gwiazdy
@@ -13,32 +30,255 @@ public class Star {
     jesli nie to wyrzuca wyjatek
     */
     private void setNazwa(String nazwa) {
-        if (nazwa == null || !nazwa.matches("^[A-Z]{3}\\d{4}$")) {
-            throw new IllegalArgumentException("Nazwa gwiazdy musi składać się z 3 dużych liter i 4 cyfr (np. ABC1234).");
-        }
-        else {
+        if (nazwa.matches("^[A-Z]{3}\\d{4}$")) {
             this.nazwa = nazwa;
         }
+        else {
+            throw new IllegalArgumentException("Nazwa gwiazdy musi składać się z 3 dużych liter i 4 cyfr");
+        }
     }
+
+
+
+
+
+
+
+
 
     //Nazwa katalogowa gwiazdy
     public String getNazwaKatalogowa() {return nazwaKatalogowa;}
 
     /*
-
+!!!!!!!!!!!!!!!!!!!! Dokonczyc
      */
     public void setNazwaKatalogowa(Gwiazdozbior gwiazdozbior) {
-        this.nazwaKatalogowa = GreckiAlfabet.values()[0] +" "+gwiazdozbior.getNazwa();
+        this.nazwaKatalogowa =gwiazdozbior.getNazwa(); //generujNazweKatalogowa(gwiazdozbior);
     }
 
 
 
 
-    public Star(String nazwa, Gwiazdozbior gwiazdozbior) {
+
+
+
+
+    //Półkula
+    public String getPolkula() {return polkula;}
+
+    /*
+    Metoda sprawdzajaca poprawnosc polkuli
+    przyjmuje polkule
+    sprawdza czy polkula jest jedna z wartosci N lub S
+    jesli nie to wyrzuca wyjatek
+     */
+    public void setPolkula(String polkula) {
+        if (polkula.equals("PN") || polkula.equals("PD")) {
+            this.polkula = polkula;
+        }
+        else {
+            throw new IllegalArgumentException("Półkula musi być jedną z wartości: PN lub PD");
+        }
+    }
+
+
+
+
+
+
+
+    //Deklinacja
+    public Deklinacja getDeklinacja() {
+        return deklinacja;
+    }
+
+    /*
+    Metoda przyjmuje deklinacje ktora juz ma poprawne wartosci stopni, minut i sekundy z klasy Deklinacja
+    sprawdza czy stopnie deklinacji sa zgodna z polkula
+     */
+    public void setDeklinacja(Deklinacja deklinacja) {
+        if (polkula.equals("PN")) {
+            if (deklinacja.getStopnie() < 0 || deklinacja.getStopnie() > 90) {
+                throw new IllegalArgumentException("Stopnie muszą być z zakresu 0 do 90 dla półkuli Północnej (PN)");
+            }
+        } else if (polkula.equals("PD")) {
+            if (deklinacja.getStopnie() > 0 || deklinacja.getStopnie() < -90) {
+                throw new IllegalArgumentException("Stopnie muszą być z zakresu 0 do -90 dla półkuli Południowej (PD)");
+            }
+        } else {
+            throw new IllegalArgumentException("Nieznana półkula");
+        }
+
+        this.deklinacja = deklinacja;
+    }
+
+
+
+
+
+
+
+    //Rektascensja
+    public Rektascensja getRektascensja() {
+        return rektascensja;
+    }
+
+    /*
+    Metoda przyjmuje rektascensje ktora juz ma poprawne wartosci godzin, minut i sekundy z klasy Rektascensja
+     */
+    public void setRektascensja(Rektascensja rektascensja) {
+        this.rektascensja = rektascensja;
+    }
+
+    //Obserwowana wielkosc gwiazdy
+    public double getObserwowanaWielkosc() {
+        return obserwowanaWielkosc;
+    }
+
+    /*
+    przyjmujemy waretosc obserwowanej wielkosci gwiazdy ktora musi byc z przedzialu od -26.74 do 15.00
+    w przeciwnym wypadku wyrzucamy wyjatek
+     */
+    public void setObserwowanaWielk(double obserwowanaWielkosc) {
+        if (obserwowanaWielkosc >= -26.74 && obserwowanaWielkosc <= 15.00) {
+            this.obserwowanaWielkosc = obserwowanaWielkosc;
+        }else {
+            throw new IllegalArgumentException("Obserwowana wielkość musi być z zakresu od -26.74 do 15.00");
+        }
+    }
+
+
+
+
+
+
+
+    //Odleglosc gwiazdy w Parsekach
+    public double getOdleglosc() {
+        return odlegloscWParsekach;
+    }
+
+    /*
+    Metoda ktora przypisuje wartosc odleglosci w parsekach i w Latach swietlnych (uzywamy w konstruktorze)
+     */
+    public void setOdlegloscWParsekach(double odlegloscWParsekach) {
+        if (odlegloscWParsekach > 0) {
+            this.odlegloscWParsekach = odlegloscWParsekach;
+            this.odlegloscWLatachSwietlnych = odlegloscWParsekach * 3.26;
+        } else {
+            throw new IllegalArgumentException("Odległość musi być większa od 0");
+        }
+    }
+
+
+
+
+
+    //Odleglosc gwiazdy w latach swietlnych
+    public double getOdlegloscWLatachSwietlnych() {
+        return odlegloscWLatachSwietlnych;
+    }
+
+    /*
+   Metoda ktora przypisuje wartosc odleglosci w parsekach i w Latach swietlnych (gdyby ktos chciał przypisac wartosc w latach swietlnych)
+    */
+    public void setOdlegloscWLatachSwietlnych(double odlegloscWLatachSwietlnych) {
+        if (odlegloscWLatachSwietlnych > 0) {
+            this.odlegloscWLatachSwietlnych = odlegloscWLatachSwietlnych;
+            this.odlegloscWParsekach = odlegloscWLatachSwietlnych / 3.26;
+        } else {
+            throw new IllegalArgumentException("Odległość musi być większa od 0");
+        }
+    }
+
+
+
+
+
+
+
+    //Absolutna wielkosc gwiazdy
+    public double getAbsolutnaWielkosc() {
+        return absolutnaWielkosc;
+    }
+
+    /*
+    Metoda obliczajaca absolutna wielkosc gwiazdy wyrazonej wzorem:
+    M = m − 5· log10r + 5 (logarytm przy podstawie 10 z r),
+     gdzie:
+     m to obserwowana wielkość gwiazdowa,
+     r to odległość od gwiazdy wyrażona w parsekach.
+     Przyjmujemy, iż 1 parsek to 3.26 roku świetlnego.
+     */
+    public void setAbsolutnaWielkosc() {
+        this.absolutnaWielkosc = this.getObserwowanaWielkosc() - (5 * Math.log10(this.odlegloscWLatachSwietlnych)) + 5;
+    }
+
+
+
+    //Temperatura gwiazdy
+    public double getTemperatura() {
+        return temperatura;
+    }
+
+    /*
+    Metoda ktora przyjmuje temperature gwiazdy ktora jest wieksza od 2000
+     */
+    public void setTemperatura(double temperatura) {
+        if (temperatura >= 2000) {
+            this.temperatura = temperatura;
+        } else {
+            throw new IllegalArgumentException("Temperatura musi być większa od 2000 Stopni");
+        }
+    }
+
+    //Masa gwiazdy
+    public double getMasa() {
+        return masa;
+    }
+
+    /*
+    Metoda ktora przypisuje mase gwiazdy z przedziału 0.1 do 50 masy słonca
+     */
+    public void setMasa(double masa) {
+        if (masa >= 0.1 && masa <= 50) {
+            this.masa = masa;
+        } else {
+            throw new IllegalArgumentException("Masa musi być z zakresu od 0.1 do 50 masy Słońca");
+        }
+    }
+
+
+
+
+
+    //Konstruktor
+    public Star(String nazwa,
+                Gwiazdozbior gwiazdozbior,
+                String polkula,
+                Deklinacja deklinacja,
+                Rektascensja rektascensja,
+                double obserwowanaWielkosc,
+                double odlegloscWParsekach,
+                double temperatura,
+                double masa)
+    {
         //przypisanie kazdemu parametrowi wartosci z konstruktora przy pomocy setterow
-        setNazwa(nazwa);
-        setNazwaKatalogowa(gwiazdozbior);
+        setNazwa(nazwa);    //mazwe gwiazdy
+        setNazwaKatalogowa(gwiazdozbior); //nazwe katalogowa gwiazdy
+        setPolkula(polkula);  // na ktorej polkuli sie znajduje
+        setDeklinacja(deklinacja);  //deklinacje
+        setRektascensja(rektascensja); //rektascensje
+        setObserwowanaWielk(obserwowanaWielkosc);  //wartosc blasku gwiazdy wyrazana w magnitudo
+        setOdlegloscWParsekach(odlegloscWParsekach); //odleglosc gwiazdy w parsekach !!ta metoda rowniez obliczy odleglosc w latach swietlnych!!
+        setAbsolutnaWielkosc(); //absolutna wielkosc za pomoca wzoru (M = m − 5· log10r + 5)
+        setTemperatura(temperatura);  //temperatura gwiazdy w Stopniach celcjusza
+        setMasa(masa);  //masa gwiazdy w masach slonca
     }
+
+
+
+
 
 
 }

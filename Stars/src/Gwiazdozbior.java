@@ -1,4 +1,5 @@
 public class Gwiazdozbior {
+    //Klasa Gwiazdozbior ktora przechowuje nazwe gwiazdozbioru ktora moze byc dowolna (Nie było to wymagane w zadaniu)
     private String nazwa;
 
     public Gwiazdozbior(String nazwa){

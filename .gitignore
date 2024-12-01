@@ -3,3 +3,5 @@ Stars/.idea/misc.xml
 /Stars/.idea
 *.iml
 .DS_Store
+/.idea
+/out
