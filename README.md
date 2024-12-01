@@ -7,5 +7,6 @@ The project involves building a Java-based application that serves as a comprehe
 - Add new stars with relevant details.
 - Delete existing entries from the database.
 - Save data persistently to ensure no information is lost.
- Manage and edit star records to maintain an accurate and up-to-date database.
+- Manage and edit star records to maintain an accurate and up-to-date database.
+  
 This project emphasizes the practical application of Java programming concepts such as object-oriented design, data structures, and file handling, while also fostering a deeper appreciation for astronomical data organization.
