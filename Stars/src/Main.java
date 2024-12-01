@@ -1,5 +1,16 @@
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Stars project");
+        try {
+
+            Star star1 = new Star("ABC1234");
+
+            System.out.println(star1.getNazwa());
+
+
+        } catch (Exception e) {
+            System.out.println("!!!Bład:"+""+e.getMessage());
+        }
+
+
     }
 }
