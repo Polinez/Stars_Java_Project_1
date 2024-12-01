@@ -23,16 +23,21 @@ public class Star {
 
     //Nazwa katalogowa gwiazdy
     public String getNazwaKatalogowa() {return nazwaKatalogowa;}
+
     /*
 
      */
+    public void setNazwaKatalogowa(Gwiazdozbior gwiazdozbior) {
+        this.nazwaKatalogowa = GreckiAlfabet.values()[0] +" "+gwiazdozbior.getNazwa();
+    }
 
 
 
 
-    public Star(String nazwa) {
+    public Star(String nazwa, Gwiazdozbior gwiazdozbior) {
         //przypisanie kazdemu parametrowi wartosci z konstruktora przy pomocy setterow
         setNazwa(nazwa);
+        setNazwaKatalogowa(gwiazdozbior);
     }
 
 

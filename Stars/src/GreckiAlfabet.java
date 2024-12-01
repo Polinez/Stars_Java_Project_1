@@ -1,4 +1,4 @@
-public enum GreecAlphabet {
+public enum GreckiAlfabet {
     alpha,
     beta,
     gamma,
