@@ -11,14 +11,14 @@ public class Star  implements Serializable {
     private Deklinacja deklinacja;
     private Rektascensja rektascensja;
     private double obserwowanaWielkosc;
-    private double odlegloscWParsekach;
     private double odlegloscWLatachSwietlnych;
+    private double odlegloscWParsekach;
     private double absolutnaWielkosc;
     private double temperatura;
     private double masa;
 
     //lista do przechowywyania wszystkich obiektow gwiazd
-    private static ArrayList<Star> listaGwiazd = new ArrayList<Star>();
+    public static ArrayList<Star> listaGwiazd = new ArrayList<Star>();
 
     // Mapa przechowująca liczbę gwiazd w danym gwiazdozbirze
     private static Map<String, Integer> mapaGwiazdWGwaizdozbiorze = new HashMap<>();    //Bardzo podoba mi sie ta nazwa ;)
@@ -47,6 +47,20 @@ public class Star  implements Serializable {
 
 
 
+    //Gwiazdozbior
+    public Gwiazdozbior getGwiazdozbior() {return gwiazdozbior;}
+
+    /*
+    Metoda ktora przypisuje gwiazdozbior do gwiazdy ktory nie jest nullem
+     */
+    public void setGwaizdozbior(Gwiazdozbior gwiazdozbior) {
+        if (gwiazdozbior != null) {
+            this.gwiazdozbior = gwiazdozbior;
+        } else {
+            throw new IllegalArgumentException("Gwiazdozbior nie może być nullem");
+        }
+    }
+
 
 
 
@@ -57,13 +71,20 @@ public class Star  implements Serializable {
     public String getNazwaKatalogowa() {return nazwaKatalogowa;}
 
     /*
-!!!!!!!!!!!!!!!!!!!! Dokonczyc
+    Metoda ktora przypisuje nazwe katalogowa gwiazdy
+    przyjmuje gwiazdozbior
+    sprawdza czy ilosc gwiazd w gwiazdozbiorze nie przekracza 25 -->jesli przekracza to wyrzuca wyjatek
+    jesli nie to tworzy nazwe katalogowa z alfabetu greckiego i nazwy gwiazdozbioru
      */
     public void setNazwaKatalogowa(Gwiazdozbior gwiazdozbior) {
-        //pobieramy z mapy ilosc gwazd w gwiazdozbiorze
-        int iloscGwiazdWGwiazdozbiorze = mapaGwiazdWGwaizdozbiorze.getOrDefault(gwiazdozbior.getNazwa(),0);
+        //pobieramy z mapy ilosc gwazd w gwiazdozbiorze domyslnie 0 zeby dało alfe pozniej
+        int iloscGwiazd = mapaGwiazdWGwaizdozbiorze.getOrDefault(gwiazdozbior.getNazwa(),0);
 
-        this.nazwaKatalogowa = GreckiAlfabet.values()[iloscGwiazdWGwiazdozbiorze].toString() + " " + gwiazdozbior.getNazwa();
+        //sprawdzamy aby nie wyszło poza zakres alfabetu greckiego
+        if (iloscGwiazd > 23) {
+            throw new IllegalArgumentException("W gwiazdozbiorze " + gwiazdozbior.getNazwa() + " nie może być więcej niż 23 gwiazdy");
+        }
+        this.nazwaKatalogowa = GreckiAlfabet.values()[iloscGwiazd].toString() + " " + gwiazdozbior.getNazwa();
 
     }
 
@@ -164,26 +185,6 @@ public class Star  implements Serializable {
 
 
 
-    //Odleglosc gwiazdy w Parsekach
-    public double getOdleglosc() {
-        return odlegloscWParsekach;
-    }
-
-    /*
-    Metoda ktora przypisuje wartosc odleglosci w parsekach i w Latach swietlnych (uzywamy w konstruktorze)
-     */
-    public void setOdlegloscWParsekach(double odlegloscWParsekach) {
-        if (odlegloscWParsekach > 0) {
-            this.odlegloscWParsekach = odlegloscWParsekach;
-            this.odlegloscWLatachSwietlnych = odlegloscWParsekach * 3.26;
-        } else {
-            throw new IllegalArgumentException("Odległość musi być większa od 0");
-        }
-    }
-
-
-
-
 
     //Odleglosc gwiazdy w latach swietlnych
     public double getOdlegloscWLatachSwietlnych() {
@@ -222,7 +223,7 @@ public class Star  implements Serializable {
      Przyjmujemy, iż 1 parsek to 3.26 roku świetlnego.
      */
     public void setAbsolutnaWielkosc() {
-        this.absolutnaWielkosc = this.getObserwowanaWielkosc() - (5 * Math.log10(this.odlegloscWLatachSwietlnych)) + 5;
+        this.absolutnaWielkosc = this.getObserwowanaWielkosc() - (5 * Math.log10(this.odlegloscWParsekach)) + 5;
     }
 
 
@@ -272,18 +273,23 @@ public class Star  implements Serializable {
                 Deklinacja deklinacja,
                 Rektascensja rektascensja,
                 double obserwowanaWielkosc,
-                double odlegloscWParsekach,
+                double odlegloscWLatachSwietlnych,
                 double temperatura,
                 double masa)
     {
         //przypisanie kazdemu parametrowi wartosci z konstruktora przy pomocy setterow
         setNazwa(nazwa);    //mazwe gwiazdy
+        setGwaizdozbior(gwiazdozbior);  //nazwe gwiazdozbioru
+
+        //dodajemy do mapy +1 gwiazde do danego gwiazdozbioru, wezne aby dodało przed nazwa katalogowa (-1 dlatego zeby zaczynało od 0  czyli od alfa )
+        mapaGwiazdWGwaizdozbiorze.put(gwiazdozbior.getNazwa(), mapaGwiazdWGwaizdozbiorze.getOrDefault(gwiazdozbior.getNazwa(), -1) + 1);
+
         setNazwaKatalogowa(gwiazdozbior); //nazwe katalogowa gwiazdy
         setPolkula(polkula);  // na ktorej polkuli sie znajduje
         setDeklinacja(deklinacja);  //deklinacje
         setRektascensja(rektascensja); //rektascensje
         setObserwowanaWielk(obserwowanaWielkosc);  //wartosc blasku gwiazdy wyrazana w magnitudo
-        setOdlegloscWParsekach(odlegloscWParsekach); //odleglosc gwiazdy w parsekach !!ta metoda rowniez obliczy odleglosc w latach swietlnych!!
+        setOdlegloscWLatachSwietlnych(odlegloscWLatachSwietlnych); //odleglosc gwiazdy w latach swietlnych (ustawia rowniez odleglosc w parsekach)
         setAbsolutnaWielkosc(); //absolutna wielkosc za pomoca wzoru (M = m − 5· log10r + 5)
         setTemperatura(temperatura);  //temperatura gwiazdy w Stopniach celcjusza
         setMasa(masa);  //masa gwiazdy w masach slonca
@@ -291,8 +297,7 @@ public class Star  implements Serializable {
         //dodajemy gwiazde do listy gdy zostanie utworzona
         listaGwiazd.add(this);
 
-        //dodajemy do mapy +1 gwiazde do danego gwiazdozbioru
-        mapaGwiazdWGwaizdozbiorze.put(gwiazdozbior.getNazwa(), mapaGwiazdWGwaizdozbiorze.getOrDefault(gwiazdozbior.getNazwa(), 0) + 1);
+
     }
 
     //Serializacja gwiazdy
@@ -313,45 +318,124 @@ public class Star  implements Serializable {
     }
 
     //Deserializacja gwiazdy
-    public static void DeserializujGwiazde(String nazwa) {
-        try {
-            //deserializujemy plik o nazwie tej nazwie gwiazdy ktora podalismy w parametrze
-            String sciezka = "Stars//src//Gwiazdy//" + nazwa + ".ser";
-            FileInputStream fileIn = new FileInputStream(sciezka);
-            ObjectInputStream in = new ObjectInputStream(fileIn);
-            Star gwiazda = (Star) in.readObject();
-            in.close();
-            fileIn.close();
-            System.out.println("Pomyslnie odczytano gwiazde o nazwie: " + gwiazda.getNazwa());
+    public static void DeserializujGwiazde(String nazwaGwiazdy) {
+        {
+            try {
+                //deserializujemy plik o nazwie tej nazwie gwiazdy ktora podalismy w parametrze
+                String sciezka = "Stars//src//Gwiazdy//" + nazwaGwiazdy + ".ser";
+                FileInputStream fileIn = new FileInputStream(sciezka);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                Star gwiazda = (Star) in.readObject();
+                in.close();
+                fileIn.close();
 
 
-            //sprawdzamy czy gwiazda o takiej nazwie juz istnieje w liscie jak istnieje to wyswietlamy blad
-            // jesli nie istnieje to dodajemy do listy
+                // Sprawdzenie, czy gwiazda o tej nazwie już istnieje w liście
+                if (SprawdzCzyGwiazdaIstnieje(gwiazda.getNazwa())) {
+                    System.out.println("Gwiazda o nazwie " + gwiazda.getNazwa() + " już istnieje.");
+                } else {
+                    // Dodanie gwiazdy do listy
+                    listaGwiazd.add(gwiazda);
 
-            for (Star g : listaGwiazd) {
-                if (g.getNazwa().equals(gwiazda.getNazwa())) {
-                    System.out.println("Gwiazda o nazwie "+g.getNazwa()+" juz istnieje");
-                }else {
-                    listaGwiazd.add(gwiazda); // dodajemy gwiazde do listy
-                    System.out.println("Pomyslnie dodano deserializowana gwiazde do listy");
+                    // Aktualizacja mapy gwiazdozbiorów
+                    mapaGwiazdWGwaizdozbiorze.put(
+                            gwiazda.getGwiazdozbior().getNazwa(),
+                            mapaGwiazdWGwaizdozbiorze.getOrDefault(gwiazda.getGwiazdozbior().getNazwa(), 0) + 1
+                    );
+
+                    System.out.println("Pomyslnie dodano deserializowaną gwiazdę do listy i mapy.");
+                }
+
+
+            //Obslugujemy rozne wyjatki poniewaz miałem problemy z deserializacja i nie wiedziałem co nie działa
+            } catch (FileNotFoundException e) {
+                throw new IllegalArgumentException("Nie znaleziono pliku o nazwie " + nazwaGwiazdy + ".ser");
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Błąd odczytu pliku " + nazwaGwiazdy + ".ser");
+            } catch (ClassNotFoundException e) {
+                throw new IllegalArgumentException("Nie udało się odczytać obiektu z pliku " + nazwaGwiazdy + ".ser");
+            }
+        }
+    }
+
+
+    private static boolean SprawdzCzyGwiazdaIstnieje(String nazwa) {
+        for (Star gwiazda : listaGwiazd) {
+            if (gwiazda.getNazwa().equals(nazwa)) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+
+
+    //Wyszukiwanie gwiazd za pomoca przeciazonych metod
+
+        //Wyswietlenie wszystkich gwiazd ktore sa na liscie (wszystkie gwiazdy)
+        public static void WyszukajGwiazde() {
+            System.out.println("Wszystkie gwiazdy:");
+            for (Star gwiazda : listaGwiazd) {
+                System.out.println("Gwaizda: " + gwiazda.nazwa  + ";" + gwiazda.nazwaKatalogowa); // Tutaj mozemy zmienic jakie warotosci chcemy aby byly wyswietlane
+            }
+        }
+
+        public static void WyszukajGwiazde(Gwiazdozbior gwiazdozbior) {
+            System.out.println("Gwiazdy w gwiazdozbiorze " + gwiazdozbior.getNazwa() + ":");
+            for (Star gwiazda : listaGwiazd) {
+                if (gwiazda.getGwiazdozbior().getNazwa().equals(gwiazdozbior.getNazwa())) {
+                    System.out.println("Gwiazda: " + gwiazda.nazwa + ";" + gwiazda.nazwaKatalogowa);
+                }
+            }
+        }
+
+        public static void WyszukajGwiazde(double odlegloscWParsekach){
+            System.out.println("Gwiazdy w odległości " + odlegloscWParsekach + " parseków:");
+            for (Star gwiazda : listaGwiazd) {
+                if (gwiazda.odlegloscWParsekach == odlegloscWParsekach) {
+                    System.out.println("Gwiazda: " + gwiazda.nazwa + ";" + gwiazda.nazwaKatalogowa);
                 }
             }
 
-            // dodajemy do mapy +1 gwiazde do danego gwiazdozbioru tak jak w konstruktorze (bo deserializacja nie wywoluje konstruktora)
-            mapaGwiazdWGwaizdozbiorze.put(gwiazda.gwiazdozbior.getNazwa(), mapaGwiazdWGwaizdozbiorze.getOrDefault(gwiazda.gwiazdozbior.getNazwa(), 0) + 1);
-
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
         }
-    }
 
-    //Wyswietlenie wszystkich gwiazd ktore sa na liscie (wszystkie gwiazdy)
-    public static void WyswietlWszytskieGwiazdy() {
-        System.out.println("Wszystkie gwiazdy:");
-        for (Star gwiazda : listaGwiazd) {
-            System.out.println("Nazwa: "+gwiazda.nazwa+" "+"Nazwa Katalogowa: "+gwiazda.nazwaKatalogowa); // Tutaj mozemy zmienic jakie warotosci chcemy aby byly wyswietlane
+        public static void WyszukajGwiazde(int odTemp, int doTemp){
+            System.out.println("Gwiazdy w temperaturze od " + odTemp + " do " + doTemp + " stopni Celsjusza:");
+            for (Star gwiazda : listaGwiazd) {
+                if (gwiazda.temperatura >= odTemp && gwiazda.temperatura <= doTemp) {
+                    System.out.println("Gwiazda: " + gwiazda.nazwa + ";" + gwiazda.nazwaKatalogowa);
+                }
+            }
         }
-    }
+
+        public static void WyszukajGwiazde(double odWielkoscAbs, double doWielkoscAbs){
+            System.out.println("Gwiazdy o absolutnej wielkości od " + odWielkoscAbs + " do " + doWielkoscAbs + ":");
+            for (Star gwiazda : listaGwiazd) {
+                if (gwiazda.absolutnaWielkosc >= odWielkoscAbs && gwiazda.absolutnaWielkosc <= doWielkoscAbs) {
+                    System.out.println("Gwiazda: " + gwiazda.nazwa + ";" + gwiazda.nazwaKatalogowa);
+                }
+            }
+        }
+
+        public static void WyszukajGwiazde(String polkula){
+            System.out.println("Gwiazdy na półkuli " + polkula + ":");
+            for (Star gwiazda : listaGwiazd) {
+                if (gwiazda.polkula.equals(polkula)) {
+                    System.out.println("Gwiazda: " + gwiazda.nazwa + ";" + gwiazda.nazwaKatalogowa);
+                }
+            }
+        }
+
+        public static void WyszukajSupernowe(){
+            System.out.println("Supernowe:");
+            for (Star gwiazda : listaGwiazd) {
+                if (gwiazda.masa >= 1.44) {
+                    System.out.println("Gwiazda: " + gwiazda.nazwa + ";" + gwiazda.nazwaKatalogowa);
+                }
+            }
+        }
+
 
 
 }
