@@ -301,8 +301,19 @@ public class Star  implements Serializable {
     }
 
     //Serializacja gwiazdy
-    public static void SerializujGwiazde(Star gwiazda){
+    public static void SerializujGwiazde(String nazwaGwiazdy){
         try {
+            // Znajdź gwiazdę o podanej nazwie (do jest funkcja tylko aby menu dobrze dzialalo, mozna by byłozrobic to podajac konkretny obiekt)
+            Star gwiazda = null;
+            for (Star s : listaGwiazd) {
+                if (s.getNazwa().equals(nazwaGwiazdy)) {
+                    gwiazda = s;
+                    break;
+                }
+            }
+            if (gwiazda == null) {
+                throw new IllegalArgumentException("Nie znaleziono gwiazdy o nazwie: " + nazwaGwiazdy);
+            }
 
             //tworzymy plik o nazwie tej gwiazdy ktora chcemy zserializowac w folderze Gwiazdy
             String sciezka = "Stars//src//Gwiazdy//" + gwiazda.getNazwa() + ".ser";
@@ -311,9 +322,9 @@ public class Star  implements Serializable {
             out.writeObject(gwiazda);
             out.close();
             fileOut.close();
-            System.out.println("Pomyslnie zserializowano gwiazde o nazwie: "+gwiazda.getNazwa());
+            System.out.println("Pomyslnie zserializowano gwiazde o nazwie: " + gwiazda.getNazwa());
         } catch (IOException e) {
-            throw new IllegalArgumentException("Błąd zapisu pliku " + gwiazda.getNazwa() + ".ser");
+            throw new IllegalArgumentException("Błąd zapisu pliku " + nazwaGwiazdy + ".ser");
         }
     }
 
