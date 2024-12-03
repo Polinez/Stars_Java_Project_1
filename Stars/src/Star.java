@@ -51,7 +51,10 @@ public class Star  implements Serializable {
     public Gwiazdozbior getGwiazdozbior() {return gwiazdozbior;}
 
     /*
-    Metoda ktora przypisuje gwiazdozbior do gwiazdy ktory nie jest nullem
+    Metoda sprawdzajaca poprawnosc gwiazdozbioru
+    przyjmuje gwiazdozbior jako obiekt
+    sprawdza czy nie jest nullem
+    jesli nie to przypisuje gwiazdozbior
      */
     public void setGwaizdozbior(Gwiazdozbior gwiazdozbior) {
         if (gwiazdozbior != null) {
@@ -71,8 +74,8 @@ public class Star  implements Serializable {
     public String getNazwaKatalogowa() {return nazwaKatalogowa;}
 
     /*
-    Metoda ktora przypisuje nazwe katalogowa gwiazdy
-    przyjmuje gwiazdozbior
+    Metoda przypisujaca wartosc nazwy katalogowej
+    przyjmuje gwiazdozbior jako obiekt
     sprawdza czy ilosc gwiazd w gwiazdozbiorze nie przekracza 25 -->jesli przekracza to wyrzuca wyjatek
     jesli nie to tworzy nazwe katalogowa z alfabetu greckiego i nazwy gwiazdozbioru
      */
@@ -100,8 +103,8 @@ public class Star  implements Serializable {
 
     /*
     Metoda sprawdzajaca poprawnosc polkuli
-    przyjmuje polkule
-    sprawdza czy polkula jest jedna z wartosci N lub S
+    przyjmuje polkule jako String
+    sprawdza czy polkula jest jedna z wartosci PN lub PD
     jesli nie to wyrzuca wyjatek
      */
     public void setPolkula(String polkula) {
@@ -125,7 +128,8 @@ public class Star  implements Serializable {
     }
 
     /*
-    Metoda przyjmuje deklinacje ktora juz ma poprawne wartosci stopni, minut i sekundy z klasy Deklinacja
+    Metoda przyjmuje deklinacje jako obiekt
+    obiekt juz ma poprawne zakresy stopni, minut i sekundy z klasy Deklinacja
     sprawdza czy stopnie deklinacji sa zgodna z polkula
      */
     public void setDeklinacja(Deklinacja deklinacja) {
@@ -162,13 +166,17 @@ public class Star  implements Serializable {
         this.rektascensja = rektascensja;
     }
 
+
+
+
     //Obserwowana wielkosc gwiazdy
     public double getObserwowanaWielkosc() {
         return obserwowanaWielkosc;
     }
 
     /*
-    przyjmujemy waretosc obserwowanej wielkosci gwiazdy ktora musi byc z przedzialu od -26.74 do 15.00
+    przyjmujemy waretosc obserwowanej wielkosci gwiazdy jako double
+     wielkosc musi byc z przedzialu od -26.74 do 15.00
     w przeciwnym wypadku wyrzucamy wyjatek
      */
     public void setObserwowanaWielk(double obserwowanaWielkosc) {
@@ -192,7 +200,7 @@ public class Star  implements Serializable {
     }
 
     /*
-   Metoda ktora przypisuje wartosc odleglosci w parsekach i w Latach swietlnych (gdyby ktos chciał przypisac wartosc w latach swietlnych)
+   Metoda ktora przypisuje wartosc odleglosci w parsekach i w Latach swietlnych (gdyby ktos chciał przypisac wartosc w parsecach)
     */
     public void setOdlegloscWLatachSwietlnych(double odlegloscWLatachSwietlnych) {
         if (odlegloscWLatachSwietlnych > 0) {
@@ -300,7 +308,7 @@ public class Star  implements Serializable {
 
     }
 
-    //Serializacja gwiazdy
+    //Serializacja gwiazdy -> pzyjmuje nazwe gwiazdy ktora chcemy zserializowac
     public static void SerializujGwiazde(String nazwaGwiazdy){
         try {
             // Znajdź gwiazdę o podanej nazwie (do jest funkcja tylko aby menu dobrze dzialalo, mozna by byłozrobic to podajac konkretny obiekt)
@@ -328,7 +336,7 @@ public class Star  implements Serializable {
         }
     }
 
-    //Deserializacja gwiazdy
+    //Deserializacja gwiazdy - > rowniez przyjmuje nazwe gwiazdy aby w menu mozna było latwiej wybierac
     public static void DeserializujGwiazde(String nazwaGwiazdy) {
         {
             try {
@@ -388,11 +396,13 @@ public class Star  implements Serializable {
         String literaGrecka;
         String nazwaGwiazdozbioru;
         if (nazwaKatalogowa.split(" ").length == 2) {
-            literaGrecka = nazwaKatalogowa.split(" ")[0];
+            literaGrecka = (nazwaKatalogowa.split(" ")[0]);
             nazwaGwiazdozbioru = nazwaKatalogowa.split(" ")[1];
         } else {
             throw new IllegalArgumentException("Nazwa katalogowa musi zawierać dwie części oddzielone spacją (litere greckiego alfabetu oraz nazwe gwiazdozbioru)");
         }
+
+
 
         //zmniejszanie mapy gwiazdozbiorow o 1
         mapaGwiazdWGwaizdozbiorze.put(nazwaGwiazdozbioru, mapaGwiazdWGwaizdozbiorze.get(nazwaGwiazdozbioru) - 1);
@@ -404,22 +414,40 @@ public class Star  implements Serializable {
 
 
         //aktualizacja nazw katalogowych aby zmiejszyly sie o 1 litere grecka
-        AktualizujNazwyKatalogowe(nazwaGwiazdozbioru,literaGrecka);
+        AktualizujNazwyKatalogowe(literaGrecka,nazwaGwiazdozbioru);
 
     }
 
 
+    /*
+    Metoda usuwajaca gwiazde z listy
+    przyjmuje nazwe katalogowa gwiazdy np alpha Ryb
+    iteruje po liscie od tylu
+    jak napotka taka sama nazwe katalogowa to usuwa ja z listy
+     */
     private static void UsuwanieGwiazdyZlisty(String nazwaKatalogowa) {
-        for (Star gwiazda : listaGwiazd) {
+        //iterujemy  po liscie od tylu aby jak usuniemy to nie bylo problemow z indeksami. Uzywamy wyklego for poniewaz w java nie mozna usuwac elementow z listy po ktorej iterujemy
+        for (int i = listaGwiazd.size() - 1; i >= 0; i--) {
+            Star gwiazda = listaGwiazd.get(i);
             if (gwiazda.getNazwaKatalogowa().equals(nazwaKatalogowa)) {
                 listaGwiazd.remove(gwiazda);
+
                 System.out.println("Usunięto gwiazdę o nazwie katalogowej " + nazwaKatalogowa + " z listy.");
             }
         }
     }
 
 
-    private static void AktualizujNazwyKatalogowe(String nazwaGwiazdozbioru, String literaGrecka) {
+    /*
+    Metoda aktualizujaca nazwy katalogowe
+    przyjmuje litere grecka i nazwe gwiazdozbioru ktore juz sa podzielone z nazwy katalogowej
+    przypisujemy numer litery greckiej do zmiennej np dla alpha --> 0
+    iterujemy po liscie gwiazd
+    jesli gwiazda jest w danym gwiazdozbiorze aby nie robic dodatkowwych operacji
+    przypisujemy tym razem nr tej gwiazdy na ktorej jestesmy teraz z listy
+    jesli numer litery greckiej jest mniejszy od numeru z porownania to zmniejszamy o 1 litere grecka
+     */
+    private static void AktualizujNazwyKatalogowe(String literaGrecka,String nazwaGwiazdozbioru) {
         //pobieramy numer litery greckiej
         int nrLiteryGreckiej= GreckiAlfabet.valueOf(literaGrecka).ordinal();
         //aktualizacja nazw katalogowych aby zmiejszyly sie o 1 litere grecka
@@ -437,7 +465,7 @@ public class Star  implements Serializable {
 
 
 
-    //Wyszukiwanie gwiazd za pomoca przeciazonych metod
+    //Wyszukiwanie gwiazd za pomoca przeciazonych metod i sprawdzania warunkow
 
         //Wyswietlenie wszystkich gwiazd ktore sa na liscie (wszystkie gwiazdy)
         public static void WyszukajGwiazde() {
@@ -493,6 +521,8 @@ public class Star  implements Serializable {
             }
         }
 
+        //tej metody nie mogłem przeciazyc poniewaaz juz jest metoda z tym samym parametrem
+        // ale mysle ze metoda wyszujujaca strikte supernowe tez jest w porzadku
         public static void WyszukajSupernowe(){
             System.out.println("Supernowe:");
             for (Star gwiazda : listaGwiazd) {

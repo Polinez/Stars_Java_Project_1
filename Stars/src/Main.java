@@ -7,8 +7,12 @@ public class Main {
 
             //Przykładowe dane
             Gwiazdozbior ryby = new Gwiazdozbior("Ryb");
-            Star star1 = new Star("ABC1234", ryby, "PD", new Deklinacja(0, 12, 12), new Rektascensja(12, 12, 12), 12.12, 12.12, 50000, 0.1);
-            Star star2 = new Star("CBA4321", ryby, "PN", new Deklinacja(1, 15, 30), new Rektascensja(13, 10, 10), 14.12, 16.12, 45000, 0.2);
+            Star star1 = new Star("ABC1111", ryby, "PD", new Deklinacja(0, 12, 12), new Rektascensja(12, 12, 12), 12.12, 12.12, 50000, 0.1);
+            Star star2 = new Star("ABC2222", ryby, "PN", new Deklinacja(1, 15, 30), new Rektascensja(13, 10, 10), 14.12, 16.12, 45000, 0.2);
+            Star star3 = new Star("ABC3333", ryby, "PN", new Deklinacja(1, 15, 30), new Rektascensja(13, 10, 10), 14.12, 16.12, 45000, 0.2);
+            Star star4 = new Star("ABC4444", ryby, "PN", new Deklinacja(1, 15, 30), new Rektascensja(13, 10, 10), 14.12, 16.12, 45000, 0.2);
+
+
 
 
             // Główna pętla menu
@@ -112,6 +116,7 @@ public class Main {
 
                     case 3:
                         // Usuwanie gwiazdy
+                        Star.WyszukajGwiazde();// wysiwtlamy wszytskie gwiazdy aby uzytkownik wiedzial jakie gwiazdy moze usunac
                         System.out.print("Podaj nazwę katalogową gwiazdy do usunięcia (np. 'beta Ryb'): ");
                         String nazwaDoUsuniecia = scanner.nextLine();
 
