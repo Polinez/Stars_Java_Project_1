@@ -18,22 +18,21 @@ public class Main {
             //Star.DeserializujGwiazde("CBA4321");
 
 
-
             System.out.println();
             Star.WyszukajGwiazde();
-            Star.WyszukajGwiazde(3);
-            Star.WyszukajGwiazde(3 , 6);
-            Star.WyszukajGwiazde(3.0,2.0);
-            Star.WyszukajGwiazde("PN");
-            Star.WyszukajSupernowe();
+//            Star.WyszukajGwiazde(3);
+//            Star.WyszukajGwiazde(3 , 6);
+//            Star.WyszukajGwiazde(3.0,2.0);
+//            Star.WyszukajGwiazde("PN");
+//            Star.WyszukajSupernowe();
+
+              Star.UsunGwiazde("beta Ryb");
+              Star.WyszukajGwiazde();
 
 
+              
 
 
-
-            //usuwanie gwiazdy o wybranej nazwie katalogowej i zeby sie aktualizowały
-
-            //wyszukiwania
 
 
 

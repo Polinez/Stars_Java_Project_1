@@ -313,7 +313,7 @@ public class Star  implements Serializable {
             fileOut.close();
             System.out.println("Pomyslnie zserializowano gwiazde o nazwie: "+gwiazda.getNazwa());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("Błąd zapisu pliku " + gwiazda.getNazwa() + ".ser");
         }
     }
 
@@ -358,7 +358,7 @@ public class Star  implements Serializable {
         }
     }
 
-
+    //Metoda sprawdzajaca czy gwiazda istnieje w liscie
     private static boolean SprawdzCzyGwiazdaIstnieje(String nazwa) {
         for (Star gwiazda : listaGwiazd) {
             if (gwiazda.getNazwa().equals(nazwa)) {
@@ -368,6 +368,61 @@ public class Star  implements Serializable {
         return false;
 
     }
+
+    //Usuwanie gwiazdy o podanej nazwie katalogowej
+    public static void UsunGwiazde(String nazwaKatalogowa) {
+
+        //pobieramy z nazwy katalogowej litere grecka i nazwe gwiazdozbioru dzielac Stringa na 2 czesci
+        //jesli nie ma 2 czesci (nazwa katalogowa) to wyrzucamy wyjatek
+        String literaGrecka;
+        String nazwaGwiazdozbioru;
+        if (nazwaKatalogowa.split(" ").length == 2) {
+            literaGrecka = nazwaKatalogowa.split(" ")[0];
+            nazwaGwiazdozbioru = nazwaKatalogowa.split(" ")[1];
+        } else {
+            throw new IllegalArgumentException("Nazwa katalogowa musi zawierać dwie części oddzielone spacją (litere greckiego alfabetu oraz nazwe gwiazdozbioru)");
+        }
+
+        //zmniejszanie mapy gwiazdozbiorow o 1
+        mapaGwiazdWGwaizdozbiorze.put(nazwaGwiazdozbioru, mapaGwiazdWGwaizdozbiorze.get(nazwaGwiazdozbioru) - 1);
+
+        //usuwanie gwiazdy z listy
+        UsuwanieGwiazdyZlisty(nazwaKatalogowa);
+
+        //usuwanie pliku gwiazdy usunietej
+
+
+        //aktualizacja nazw katalogowych aby zmiejszyly sie o 1 litere grecka
+        AktualizujNazwyKatalogowe(nazwaGwiazdozbioru,literaGrecka);
+
+    }
+
+
+    private static void UsuwanieGwiazdyZlisty(String nazwaKatalogowa) {
+        for (Star gwiazda : listaGwiazd) {
+            if (gwiazda.getNazwaKatalogowa().equals(nazwaKatalogowa)) {
+                listaGwiazd.remove(gwiazda);
+                System.out.println("Usunięto gwiazdę o nazwie katalogowej " + nazwaKatalogowa + " z listy.");
+            }
+        }
+    }
+
+
+    private static void AktualizujNazwyKatalogowe(String nazwaGwiazdozbioru, String literaGrecka) {
+        //pobieramy numer litery greckiej
+        int nrLiteryGreckiej= GreckiAlfabet.valueOf(literaGrecka).ordinal();
+        //aktualizacja nazw katalogowych aby zmiejszyly sie o 1 litere grecka
+        for (Star gwiazda : listaGwiazd) {
+            if (gwiazda.getGwiazdozbior().getNazwa().equals(nazwaGwiazdozbioru)) {
+                int nrLiteryZPorownania= GreckiAlfabet.valueOf(gwiazda.nazwaKatalogowa.split(" ")[0]).ordinal();
+                if (nrLiteryGreckiej < nrLiteryZPorownania) {
+                    gwiazda.nazwaKatalogowa = GreckiAlfabet.values()[nrLiteryZPorownania - 1].toString() + " " + nazwaGwiazdozbioru;
+                }
+            }
+        }
+        System.out.println("Zaktualizowano nazwy katalogowe gwiazd w gwiazdozbiorze " + nazwaGwiazdozbioru);
+    }
+
 
 
 
