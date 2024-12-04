@@ -10,3 +10,11 @@ The project involves building a Java-based application that serves as a comprehe
 - Manage and edit star records to maintain an accurate and up-to-date database.
   
 This project emphasizes the practical application of Java programming concepts such as object-oriented design, data structures, and file handling, while also fostering a deeper appreciation for astronomical data organization.
+
+---
+## How to
+
+- clone repo or downlad zip
+- run in youre Java IDE
+- code was created in JDK 23
+- run class main and there is terminal menu to use this project
