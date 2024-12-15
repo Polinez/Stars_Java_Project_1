@@ -1,5 +1,5 @@
 # Stars_Java_Project_1
-This is the first semestral project for the Winter Semester of the Java Programming class. Exercises provided by [Dr. Przemysław Juszczuk](http://www.pjuszczuk.pl/info/)
+This is the first semestral project for the Winter Semester of the Java Programming class.
 
 ## Description
 The project involves building a Java-based application that serves as a comprehensive database for managing celestial objects, specifically stars. The application allows users to:
